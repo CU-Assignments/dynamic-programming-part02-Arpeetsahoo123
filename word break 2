@@ -1,0 +1,36 @@
+class Solution 
+{
+    bool helper(string& s, unordered_set<string>& st, vector<string>& answer, string& current, int start)
+    {
+        // Base case: if we've reached the end of the string, add the current sentence to answer.
+        if(start == s.size())
+        {
+            answer.push_back(current);
+            return true;
+        }
+
+        // Try every possible substring starting from 'start'
+        for(int end = start; end < s.size(); end++)
+        {
+            string subString = s.substr(start, end - start + 1);
+            if(st.find(subString) != st.end())
+            {
+                // Build the new sentence; add a space only if 'current' is not empty.
+                string temp = (current.empty()) ? subString : current + " " + subString;
+                helper(s, st, answer, temp, end + 1);
+            }
+        }
+
+        return false;
+    }
+
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) 
+    {
+        unordered_set<string> st(wordDict.begin(), wordDict.end());
+        vector<string> answer;
+        string current = "";
+        helper(s, st, answer, current, 0);
+        return answer;
+    }
+};
