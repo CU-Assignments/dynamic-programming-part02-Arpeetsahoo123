@@ -1,0 +1,50 @@
+class Solution 
+{
+    // helper function with memoization
+    bool helper(string& s, unordered_set<string>& st, int start, vector<int>& dp)
+    {
+        // base case: if we've reached the end of the string, it's successfully segmented
+        if(start == s.size()) return true;
+
+        // if result for this index has already been computed, return it
+        if(dp[start] != -1) return dp[start];
+
+        // try every possible substring starting at 'start'
+        for(int end = start; end < s.size(); end++)
+        {
+            string subString = s.substr(start, end - start + 1);
+            if(st.find(subString) != st.end() && helper(s, st, end + 1, dp))
+            {
+                dp[start] = 1;
+                return true;
+            }
+        }
+
+        // if no valid segmentation is found, mark this index as false
+        dp[start] = 0;
+        return false;
+    }
+
+public:
+    bool wordBreak(string s, vector<string>& wordDict) 
+    {
+        int size = s.size();
+        unordered_set<string> st(wordDict.begin(), wordDict.end());
+        vector<int> dp(size + 1, -1);
+
+        // handle edge case for single-character string
+        if(size == 1)
+        {
+            string temp = "";
+            temp += s[0];
+            if(st.find(temp) == st.end())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        // call the helper function starting from index 0
+        return helper(s, st, 0, dp);
+    }
+};
